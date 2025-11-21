@@ -28,7 +28,14 @@ except Exception as e:
 # 定义调用 ChatGPT 的函数来给 note 打标签的 prompt 和逻辑
 def label_claim_note(note):
     prompt = (
-        f"Based on the following claim adjuster note, identify potential contributing factors such as 'Distraction', 'Fatigue', 'Light Condition', or 'Roadway Design'. If you find any other relevant contributing factors, feel free to include them as well. Please label the contributing factors based strictly on what is explicitly mentioned in the claim note. Do not infer or add extra labels beyond the given information. Here is the note: '{note}'"
+        f"Based on the following claim adjuster note, identify contributing factors ONLY if they are explicitly stated as existing BEFORE the accident.\n"
+        f"Rules:\n"
+        f"1. DO NOT infer or guess any contributing factors.\n"
+        f"2. DO NOT label anything as a contributing factor if it is described as a POST-ACCIDENT change, symptom, or new condition.\n"
+        f"3. If the note does not explicitly state a pre-accident condition (e.g., fatigue, distraction, impairment, etc.), DO NOT label it.\n"
+        f"4. Only return factors that are clearly and directly mentioned as contributing causes before the accident.\n"
+        f"5. If no valid pre-accident contributing factor is explicitly stated, return: 'None'.\n\n"
+        f"Here is the note: '{note}'"
     )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
