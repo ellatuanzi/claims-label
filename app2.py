@@ -4,157 +4,261 @@ import streamlit as st
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# Load environment variables
 load_dotenv()
+
+# Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# -----------------------------
-# Prompt Template
-# -----------------------------
+# =====================================================
+# Prompt Template (Full)
+# =====================================================
 PROMPT_TEMPLATE = """
 You are an insurance claims analyst. You will evaluate the following claim note.
 
 Claim Note:
 \"\"\"{claim_text}\"\"\"
 
+
 Your tasks:
 
+------------------------------------------------------------
 1. **Clarity Score (1–5)**  
-Evaluate how clearly the note is written.  
 - 1 = very unclear  
 - 3 = somewhat clear  
 - 5 = very clear  
-Provide:  
-- Clarity Score  
-- One-sentence reason
+Return:
+- clarity_score  
+- clarity_reason  
 
+------------------------------------------------------------
 2. **Complexity Score (1–5)**  
-Evaluate how complex the incident is.  
-- 1 = simple (single vehicle, no injuries, clear liability)  
+- 1 = simple  
 - 3 = moderate  
-- 5 = complex (multiple parties, injuries, disputes)  
-Provide:  
-- Complexity Score  
-- One-sentence reason
+- 5 = complex  
+Return:
+- complexity_score  
+- complexity_reason  
 
+------------------------------------------------------------
 3. **Contributing Factors**  
-Extract a **list of key contributing factors** from the note.  
-Examples: speeding, weather, fatigue, following distance, distraction, cargo load, mechanical failure, road condition.
-
+Extract explicit pre-accident contributing factors only.
 Rules:
-1. DO NOT infer or guess any contributing factors.
-2. DO NOT label anything as a contributing factor if it is described as a POST-ACCIDENT change, symptom, or new condition.
-3. If the note does not explicitly state a pre-accident condition (e.g., fatigue, distraction, impairment, etc.), DO NOT label it.
-4. Only return factors that are clearly and directly mentioned as contributing causes before the accident.
-5. If no valid pre-accident contributing factor is explicitly stated, return an empty array [].
+- Do NOT infer or guess.
+- Do NOT use post-accident conditions.
+- If none explicitly stated, return ["None"].
 
-IMPORTANT: Return ONLY valid JSON. Do not include any markdown formatting, code blocks, or explanatory text.
+Return:
+- contributing_factors: list
 
-Return results in this exact JSON format:
+------------------------------------------------------------
+4. **Inconsistency Detection**  
+Identify contradictions or conflicting statements in the narrative.
+
+Examples:
+- "driver uninjured" vs later "reports neck pain"
+- single-vehicle vs describes another vehicle
+- time mismatch
+- location mismatch
+- police report inconsistencies
+
+Return:
+- inconsistencies: list of strings  
+If none: return ["None"]
+
+------------------------------------------------------------
+5. **Structured Information Extraction**  
+Extract structured fields ONLY if explicitly mentioned.
+
+Return JSON object:
+extracted_info = {{{{
+    "incident_date": "...",
+    "location": "...",
+    "vehicles_involved": "...",
+    "injuries": "...",
+    "weather": "...",
+    "road_condition": "...",
+    "speed": "...",
+    "police_report": "...",
+    "liability_statement": "...",
+    "citation": "...",
+    "cargo_load": "...",
+    "distraction": "...",
+    "mechanical_issue": "...",
+}}}}
+
+If a field does not appear, use null.
+
+------------------------------------------------------------
+
+Return a JSON with keys:
 {{
-  "clarity_score": <number 1-5>,
-  "clarity_reason": "<string>",
-  "complexity_score": <number 1-5>,
-  "complexity_reason": "<string>",
-  "contributing_factors": [<array of strings>]
+ "clarity_score": int,
+ "clarity_reason": str,
+ "complexity_score": int,
+ "complexity_reason": str,
+ "contributing_factors": list,
+ "inconsistencies": list,
+ "extracted_info": dict
 }}
 """
 
-# -----------------------------
-# Streamlit UI
-# -----------------------------
-st.set_page_config(page_title="Claim Note Scoring App", layout="wide")
-st.title("🚗 Insurance Claim LLM Scoring App")
-st.write("Enter a claim note below and the model will evaluate clarity, complexity, and contributing factors.")
+# =====================================================
+# OpenAI Function
+# =====================================================
+def score_claim(claim_text: str):
+    prompt = PROMPT_TEMPLATE.format(claim_text=claim_text)
 
-# Text input box
-claim_text = st.text_area("Claim Note", height=200, placeholder="Paste a claim note here...")
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a highly reliable insurance claims evaluation assistant. Return ONLY valid JSON without any markdown formatting."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0,
+            response_format={"type": "json_object"}
+        )
 
-# Run button
-if st.button("Score Claim", type="primary"):
+        raw = completion.choices[0].message.content
+        
+        # Clean up any markdown formatting
+        raw = raw.strip()
+        if raw.startswith("```json"):
+            raw = raw[7:]
+        if raw.startswith("```"):
+            raw = raw[3:]
+        if raw.endswith("```"):
+            raw = raw[:-3]
+        raw = raw.strip()
+        
+        parsed = json.loads(raw)
+        
+        # Normalize keys - strip whitespace and newlines from all keys
+        def normalize_keys(obj):
+            if isinstance(obj, dict):
+                return {k.strip(): normalize_keys(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [normalize_keys(item) for item in obj]
+            else:
+                return obj
+        
+        result = normalize_keys(parsed)
+        return result
+        
+    except Exception as e:
+        st.error(f"Error scoring claim: {e}")
+        if 'raw' in locals():
+            st.write("Raw output:")
+            st.code(raw, language="text")
+        raise
 
-    if not claim_text.strip():
-        st.error("Please enter a claim note.")
-        st.stop()
 
-    with st.spinner("Scoring claim..."):
-        prompt = PROMPT_TEMPLATE.format(claim_text=claim_text)
+# =====================================================
+# Streamlit Interface
+# =====================================================
 
-        try:
-            completion = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a highly reliable insurance claims evaluation assistant. You always return valid JSON without any markdown formatting or code blocks."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0,
-                response_format={"type": "json_object"}
-            )
+st.title("📄 Advanced Claim Analysis App (LLM-Powered)")
+st.write("Scoring • Contributing Factors • Inconsistency Detection • Information Extraction • Batch Analytics")
 
-            raw_output = completion.choices[0].message.content
-            
-            # Clean up the output in case it has markdown code blocks
-            raw_output = raw_output.strip()
-            if raw_output.startswith("```json"):
-                raw_output = raw_output[7:]
-            if raw_output.startswith("```"):
-                raw_output = raw_output[3:]
-            if raw_output.endswith("```"):
-                raw_output = raw_output[:-3]
-            raw_output = raw_output.strip()
-            
-            # Parse JSON result
-            parsed = json.loads(raw_output)
-            
-            # Normalize the result - handle nested objects and strip whitespace from all keys
-            def normalize_keys(obj):
-                if isinstance(obj, dict):
-                    return {k.strip(): normalize_keys(v) for k, v in obj.items()}
-                elif isinstance(obj, list):
-                    return [normalize_keys(item) for item in obj]
-                else:
-                    return obj
-            
-            result = normalize_keys(parsed)
+mode = st.sidebar.radio(
+    "Select Mode",
+    ["Single Claim Analysis", "Batch Folder Analysis"]
+)
 
-        except json.JSONDecodeError as je:
-            st.error(f"Model returned invalid JSON. Error: {je}")
-            st.code(raw_output, language="text")
-            st.stop()
-        except Exception as e:
-            st.error(f"Error: {e}")
-            with st.expander("Debug Info"):
-                st.write("Raw output:")
-                st.code(raw_output, language="text")
-                if 'parsed' in locals():
-                    st.write("Parsed result:")
-                    st.json(parsed)
-                    st.write("Keys in result:")
-                    st.write(list(parsed.keys()))
-            st.stop()
 
-        # Display results
-        st.subheader("📊 Results")
+# =====================================================
+# Mode 1 — Single Claim
+# =====================================================
+if mode == "Single Claim Analysis":
+    st.header("🔍 Analyze a Single Claim")
 
-        col1, col2 = st.columns(2)
+    claim_text = st.text_area("Enter claim note:", height=200)
 
-        with col1:
-            st.markdown("### Clarity Score")
-            st.metric("Score", result.get("clarity_score", "N/A"))
-            st.write(result.get("clarity_reason", ""))
-
-        with col2:
-            st.markdown("### Complexity Score")
-            st.metric("Score", result.get("complexity_score", "N/A"))
-            st.write(result.get("complexity_reason", ""))
-
-        st.markdown("### 🧩 Contributing Factors")
-        factors = result.get("contributing_factors", [])
-        if factors == "None" or factors == []:
-            st.info("No contributing factors explicitly stated.")
+    if st.button("Run Analysis"):
+        if not claim_text.strip():
+            st.error("Please enter claim text.")
         else:
-            for f in factors:
-                st.success(f"- {f}")
+            result = score_claim(claim_text)
+            
+            # Debug: show what keys are in the result
+            st.write("DEBUG - Keys in result:", list(result.keys()))
 
-        st.markdown("### 🔍 Raw Model Output (Debug)")
-        st.code(raw_output, language="json")
+            st.subheader("⭐ Clarity & Complexity Scores")
+            st.write(f"**Clarity:** {result.get('clarity_score', 'N/A')} — {result.get('clarity_reason', '')}")
+            st.write(f"**Complexity:** {result.get('complexity_score', 'N/A')} — {result.get('complexity_reason', '')}")
+
+            st.subheader("🔍 Contributing Factors")
+            st.json(result.get("contributing_factors", []))
+
+            st.subheader("⚠ Inconsistencies")
+            st.json(result.get("inconsistencies", []))
+
+            st.subheader("📋 Extracted Structured Info")
+            st.json(result.get("extracted_info", {}))
+            
+            st.subheader("🔧 Raw Result (Debug)")
+            st.json(result)
+
+
+# =====================================================
+# Mode 2 — Batch
+# =====================================================
+if mode == "Batch Folder Analysis":
+    st.header("📂 Batch Analysis from JSON Files")
+
+    uploaded_files = st.file_uploader(
+        "Upload claim JSON files (each must contain 'claim_text')",
+        type=["json"],
+        accept_multiple_files=True
+    )
+
+    if uploaded_files:
+        st.success(f"{len(uploaded_files)} files uploaded.")
+
+        records = []
+        factor_counts = {}
+        inconsistency_counts = {}
+
+        for file in uploaded_files:
+            data = json.load(file)
+            
+            # Handle both single object and array of objects
+            items = data if isinstance(data, list) else [data]
+            
+            for item in items:
+                # Try both 'claim_note' and 'claim_text' keys
+                text = item.get("claim_note", item.get("claim_text", ""))
+                
+                if not text.strip():
+                    continue
+                    
+                result = score_claim(text)
+                result["claim_text"] = text
+                records.append(result)
+
+                # Count contributing factors
+                for f in result["contributing_factors"]:
+                    if f not in ["None", "", None]:
+                        factor_counts[f] = factor_counts.get(f, 0) + 1
+
+                # Count inconsistencies
+                for inc in result["inconsistencies"]:
+                    if inc not in ["None", "", None]:
+                        inconsistency_counts[inc] = inconsistency_counts.get(inc, 0) + 1
+
+        # Aggregates
+        avg_clarity = sum(r["clarity_score"] for r in records) / len(records)
+        avg_complexity = sum(r["complexity_score"] for r in records) / len(records)
+
+        st.subheader("📊 Aggregate Scores")
+        st.write(f"**Average Clarity:** {avg_clarity:.2f}")
+        st.write(f"**Average Complexity:** {avg_complexity:.2f}")
+
+        st.subheader("🔥 Contributing Factor Distribution")
+        st.json(factor_counts)
+
+        st.subheader("⚠ Inconsistency Frequency")
+        st.json(inconsistency_counts)
+
+        st.subheader("📄 Sample Extracted Info (first item)")
+        st.json(records[0]["extracted_info"])
