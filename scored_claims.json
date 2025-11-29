@@ -1,0 +1,186 @@
+[
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear, providing a straightforward account of the incident with minimal ambiguity.",
+    "complexity_score":2,
+    "complexity_reason":"The incident is relatively simple, involving a rear-end collision with no injuries and clear weather conditions.",
+    "contributing_factors":[
+      "light rain",
+      "traffic slowed suddenly"
+    ],
+    "id":1,
+    "claim_note":"Truck rear-ended a passenger vehicle on the highway. Driver stated he tried to brake but traffic slowed suddenly. No injuries reported. Light rain at the time. Passenger vehicle had rear bumper damage."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could benefit from more detail about the incident.",
+    "complexity_score":2,
+    "complexity_reason":"The incident is straightforward with no injuries and minimal damage.",
+    "contributing_factors":[
+      "checking phone for directions"
+    ],
+    "id":2,
+    "claim_note":"Driver drifted out of lane and sideswiped a box truck. Insured admitted he was checking his phone for directions. No injuries. Damage to right side mirror and panel."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could benefit from more detail about the incident.",
+    "complexity_score":3,
+    "complexity_reason":"The incident involves a loss of control and fatigue, which adds some complexity but is not overly complicated.",
+    "contributing_factors":[
+      "fatigued after 12 hours on duty"
+    ],
+    "id":3,
+    "claim_note":"Vehicle lost control on curve and struck guardrail. Driver reported being fatigued after 12 hours on duty. No passengers. Tow required."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could benefit from more detail regarding the incident.",
+    "complexity_score":2,
+    "complexity_reason":"The incident involves a minor collision with no injuries, making it relatively straightforward.",
+    "contributing_factors":[
+      "SUV was speeding"
+    ],
+    "id":4,
+    "claim_note":"Third party alleged insured changed lanes aggressively and clipped the rear bumper of their SUV. Insured denied and claimed the SUV was speeding. Minor damage. No injuries."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could benefit from more detail about the debris.",
+    "complexity_score":2,
+    "complexity_reason":"The incident involves a single vehicle and a straightforward cause, making it less complex.",
+    "contributing_factors":[
+      "debris on roadway"
+    ],
+    "id":5,
+    "claim_note":"Truck struck debris on roadway causing tire blowout. Driver maintained control but trailer swayed and damaged cargo inside. No collision with other vehicles. No injuries."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could provide more detail about the incident.",
+    "complexity_score":2,
+    "complexity_reason":"The incident is straightforward with no witnesses or complex circumstances.",
+    "contributing_factors":[
+
+    ],
+    "id":6,
+    "claim_note":"Insured\u2019s parked vehicle was hit by unknown party overnight. No witnesses. Damage to left front fender. Police report filed."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear, detailing the incident and conditions, but could be more concise.",
+    "complexity_score":2,
+    "complexity_reason":"The incident is straightforward with no injuries and minor damage, making it less complex.",
+    "contributing_factors":[
+      "wet roads",
+      "reduced visibility",
+      "distracted adjusting GPS"
+    ],
+    "id":7,
+    "claim_note":"Insured driver reported rear-ending a small sedan while approaching a red light. Driver stated that the roads were wet due to light rain and visibility was reduced. No injuries reported. The sedan driver complained of minor bumper damage. Insured admitted he was distracted adjusting the GPS."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could benefit from more detail about the circumstances leading to the incident.",
+    "complexity_score":3,
+    "complexity_reason":"The incident involves a single vehicle and a straightforward maneuver, but the load shift adds a layer of complexity.",
+    "contributing_factors":[
+      "swerved to avoid debris",
+      "driver had been on duty for 9 hours"
+    ],
+    "id":8,
+    "claim_note":"Truck driver swerved to avoid debris on the highway and struck the guardrail. Load shifted during maneuver, causing additional damage to the trailer. No other vehicles involved. Driver had been on duty for 9 hours at the time of incident. No injuries reported."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could benefit from more detail regarding the circumstances of the merge.",
+    "complexity_score":3,
+    "complexity_reason":"The incident involves multiple parties and factors, but the damage and injuries are minimal.",
+    "contributing_factors":[
+      "blind spot",
+      "heavy traffic"
+    ],
+    "id":9,
+    "claim_note":"Insured vehicle was sideswiped while merging onto I-75. Third party stated insured merged abruptly without signaling. Insured claims blind spot and heavy traffic made it difficult to see. Minor damage to left rear door. No injuries on either side."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear, detailing the incident and its circumstances, but could be slightly more concise.",
+    "complexity_score":3,
+    "complexity_reason":"The incident involves a single vehicle collision due to weather conditions, which adds some complexity but is not overly complicated.",
+    "contributing_factors":[
+      "icy bridge surface",
+      "sudden ice"
+    ],
+    "id":10,
+    "claim_note":"Driver lost control on icy bridge surface and collided with median. EMS called but no injuries. Vehicle sustained moderate front-end damage. Incident occurred at 6:20 AM before sunrise. Driver stated he was traveling under the speed limit but sudden ice caused skidding."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear, but the mention of the backup camera being fogged could be more explicitly connected to the incident.",
+    "complexity_score":2,
+    "complexity_reason":"The incident involves a straightforward backing accident with no injuries or complex circumstances.",
+    "contributing_factors":[
+      "backup camera fogged due to condensation"
+    ],
+    "id":11,
+    "claim_note":"Delivery van struck a parked car while backing into a narrow driveway. Insured stated the backup camera was fogged due to condensation. No injuries. Parked vehicle owner not present at the scene. Photographs taken and police report filed."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear, but the conflicting accounts of the traffic light color could cause some confusion.",
+    "complexity_score":3,
+    "complexity_reason":"The incident involves multiple parties and a chain reaction, which adds some complexity but is not overly complicated.",
+    "contributing_factors":[
+      "Insured ran a red light",
+      "Insured attempted to clear the intersection"
+    ],
+    "id":12,
+    "claim_note":"Three-vehicle accident at intersection. Third party 1 reports insured ran a red light. Insured states the light turned yellow and he attempted to clear the intersection. Third party 2 struck the insured\u2019s rear quarter panel during the chain reaction. Minor injuries reported by third party 1."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could benefit from more detail about the circumstances leading to the brake fade.",
+    "complexity_score":3,
+    "complexity_reason":"The incident involves multiple factors such as brake fade and driver fatigue, but it does not involve a collision or other vehicles, making it moderately complex.",
+    "contributing_factors":[
+      "brake fade",
+      "driver fatigue"
+    ],
+    "id":13,
+    "claim_note":"Insured semi-truck experienced brake fade descending mountain grade. Driver used runaway ramp to stop vehicle safely. Trailer sustained undercarriage damage from gravel. No collision with other vehicles. Driver reported fatigue after long shift."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear but could benefit from more detail regarding the circumstances of the incident.",
+    "complexity_score":3,
+    "complexity_reason":"The incident involves multiple parties and potential injuries, but the overall situation is straightforward.",
+    "contributing_factors":[
+      "poor drainage on roadway"
+    ],
+    "id":14,
+    "claim_note":"Vehicle hydroplaned during heavy rain and collided with SUV in adjacent lane. Both parties exchanged information. Two passengers in SUV complained of neck stiffness but refused EMS transport. Insured stated poor drainage on roadway contributed to the incident."
+  },
+  {
+    "clarity_score":5,
+    "clarity_reason":"The note is straightforward and clearly states the details of the incident.",
+    "complexity_score":2,
+    "complexity_reason":"The incident involves theft but lacks complications such as injuries or multiple parties.",
+    "contributing_factors":[
+
+    ],
+    "id":15,
+    "claim_note":"Insured reported theft from parked truck overnight. Tools and equipment valued at approx. $3,000 missing. No signs of forced entry. Surveillance footage from nearby business is being reviewed. No injuries involved."
+  },
+  {
+    "clarity_score":4,
+    "clarity_reason":"The note is mostly clear, but the phrasing could be more concise.",
+    "complexity_score":3,
+    "complexity_reason":"The incident involves multiple parties and factors, but the details are straightforward.",
+    "contributing_factors":[
+      "sun glare"
+    ],
+    "id":16,
+    "claim_note":"While making a left turn, insured struck a bicyclist who was traveling in the crosswalk. Bicyclist experienced minor leg injury and was transported for evaluation. Insured stated sun glare prevented him from seeing the cyclist. Police cited insured for failure to yield."
+  }
+]

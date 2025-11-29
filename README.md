@@ -1,26 +1,29 @@
 # Claim Factor Analyzer
 
-An AI-powered tool that automatically analyzes insurance claim adjuster notes to identify contributing factors such as Distraction, Fatigue, Light Condition, and Roadway Design using OpenAI's GPT model.
+An AI-powered tool that automatically analyzes insurance claim adjuster notes to identify contributing factors, assess claim clarity and complexity, and generate insights using OpenAI's GPT models.
 
 ## Features
 
-- **Automated Labeling**: Uses GPT-3.5-turbo to analyze claim notes and identify contributing factors
-- **Binary Indicators**: Creates binary columns for each key factor for easy analysis
-- **Interactive Dashboard**: Streamlit-based visualization showing:
-  - Contributing factors distribution
-  - Factor counts and statistics
-  - Claims with multiple factors
-  - Detailed claim data with binary indicators
+- **🤖 AI-Powered Analysis**: Uses GPT models to analyze claim notes
+- **📊 Two Interactive Apps**:
+  - **App 1**: Batch processing with binary indicators for multiple claims
+  - **App 2**: Single claim scoring with clarity, complexity, and contributing factors
+- **📈 Advanced Analytics**: Visual dashboards with charts and statistics
+- **🔍 Pre-Accident Focus**: Identifies only factors explicitly stated before accidents
 
 ## Project Structure
 
 ```
 claim label/
-├── app.py                      # Main Streamlit application
-├── data_generation.py          # Script to generate synthetic claim data
-├── synthetic_claim_data.csv    # Generated synthetic claims
-├── labeled_claim_data.csv      # Labeled claims with binary indicators
-└── README.md                   # This file
+├── app.py                          # Batch claim analysis dashboard
+├── app2.py                         # Single claim scoring app
+├── data_generation.py              # Script to generate synthetic claim data
+├── synthetic_claim_data.json       # JSON dataset of synthetic claims
+├── synthetic_claim_data.csv        # CSV format of synthetic claims
+├── labeled_claim_data.csv          # Labeled claims with binary indicators
+├── scored_claims.json              # Output from batch scoring
+├── .env.example                    # Environment variable template
+└── README.md                       # This file
 ```
 
 ## Installation
@@ -33,7 +36,7 @@ claim label/
 
 2. **Install required packages**
    ```bash
-   pip install pandas openai streamlit
+   pip install pandas openai streamlit python-dotenv altair
    ```
 
 3. **Set up OpenAI API Key**
@@ -60,42 +63,63 @@ claim label/
 
 ## Usage
 
-### 1. Generate Synthetic Data
+### App 1: Batch Claim Analysis (app.py)
 
-Run the data generation script to create sample claim notes:
+Process multiple claims at once with comprehensive analytics.
+
+**Run the app:**
+```bash
+streamlit run app.py
+```
+
+**Features:**
+- Loads claim dataset from JSON file
+- Scores all claims using GPT-4o-mini
+- Generates aggregate statistics:
+  - Average clarity and complexity scores
+  - Claims with lowest clarity
+  - Claims with highest complexity
+  - Contributing factor frequency analysis
+- Saves results to `scored_claims.json`
+
+**Screenshot:**
+![Batch Analysis Dashboard](screenshots/Screenshot 2025-11-28 at 8.39.23 PM.png)
+
+### App 2: Single Claim Scoring (app2.py)
+
+Evaluate individual claims with detailed scoring.
+
+**Run the app:**
+```bash
+streamlit run app2.py
+```
+
+**Features:**
+- Interactive text input for claim notes
+- Real-time LLM scoring with:
+  - **Clarity Score (1-5)**: How clearly the note is written
+  - **Complexity Score (1-5)**: How complex the incident is
+  - **Contributing Factors**: List of pre-accident factors
+- JSON response format for easy integration
+- Debug view showing raw model output
+
+**Screenshots:**
+
+#### Input Interface
+![Single Claim Input](screenshots/app2-input.png)
+
+#### Results Display
+![Single Claim Results](screenshots/app2-results.png)
+
+### Data Generation
+
+Create synthetic claim data for testing:
 
 ```bash
 python data_generation.py
 ```
 
-This creates `synthetic_claim_data.csv` with 11 sample claim notes.
-
-### 2. Run the Streamlit Dashboard
-
-Launch the interactive dashboard:
-
-```bash
-streamlit run app.py
-```
-
-The app will:
-- Load the synthetic claim data
-- Analyze each claim note using GPT-3.5-turbo
-- Create binary indicator columns for key factors
-- Display visualizations and statistics
-- Save the results to `labeled_claim_data.csv`
-
-### 3. View the Dashboard
-
-The dashboard will open in your browser (typically at `http://localhost:8501`) and display:
-
-- **Contributing Factors Analysis**: Bar chart showing frequency of each factor
-- **Factor Counts**: Numerical breakdown of each contributing factor
-- **Statistics**: 
-  - Total claims processed
-  - Claims with multiple factors
-  - Claims with no factors identified
-- **Detailed Claim Data**: Table with claim notes and binary indicators
+This creates both `synthetic_claim_data.csv` and `synthetic_claim_data.json` with sample claim notes.
 
 ## Key Contributing Factors
 
@@ -121,7 +145,55 @@ For each claim, the following binary columns are created:
 - pandas
 - openai >= 2.0.0
 - streamlit
+- python-dotenv
+- altair (for visualizations)
 - httpx (for OpenAI client)
+
+## Models Used
+
+- **App 1 (Batch Processing)**: GPT-4o-mini
+- **App 2 (Single Scoring)**: GPT-3.5-turbo with JSON mode
+
+## Example Analysis
+
+### Input Claim Note
+```
+Driver drifted out of lane and sideswiped a box truck. 
+Insured admitted he was checking his phone for directions. 
+No injuries. Damage to right side mirror and panel.
+```
+
+### Output (App 2)
+```json
+{
+  "clarity_score": 4,
+  "clarity_reason": "The note clearly describes the incident with specific details about the collision and damage",
+  "complexity_score": 2,
+  "complexity_reason": "Simple single-vehicle incident with clear liability and no injuries",
+  "contributing_factors": ["distraction", "phone use"]
+}
+```
+
+## Screenshots
+
+To add screenshots to this README:
+
+1. Create a `screenshots` folder in the project root
+2. Take screenshots of:
+   - `app2-input.png` - The text input interface
+   - `app2-results.png` - The results display with scores
+   - `app1-dashboard.png` - The batch analysis dashboard
+3. Save them in the screenshots folder
+
+## Contributing Factors Examples
+
+The system can identify various contributing factors when explicitly mentioned:
+- **Distraction**: Phone use, GPS adjustment, passenger interaction
+- **Fatigue**: Long driving hours, drowsiness, lack of sleep
+- **Weather**: Rain, ice, fog, poor visibility
+- **Road Conditions**: Debris, poor lighting, road design
+- **Mechanical**: Brake failure, tire blowout
+- **Speed**: Excessive speed, following too closely
 
 ## Configuration
 
